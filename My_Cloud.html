@@ -1,0 +1,1724 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <!-- ============ SEO ============ -->
+    <title>MyCloud — Kho lưu trữ đám mây cá nhân</title>
+    <meta name="description" content="MyCloud — Lưu trữ ảnh, video, tài liệu an toàn. Chia sẻ với bạn bè qua link có quyền Chỉ xem hoặc Chỉnh sửa. Không cần đăng nhập.">
+    <meta name="keywords" content="cloud storage, lưu trữ đám mây, chia sẻ file, lưu ảnh, lưu video, mycloud">
+    <meta name="author" content="MyCloud">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="color-scheme" content="dark">
+
+    <!-- ============ Open Graph / Facebook / Zalo ============ -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="MyCloud — Kho lưu trữ đám mây cá nhân">
+    <meta property="og:description" content="Lưu trữ ảnh, video, tài liệu. Chia sẻ dễ dàng với quyền xem/chỉnh sửa.">
+    <meta property="og:site_name" content="MyCloud">
+
+    <!-- ============ Twitter Card ============ -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="MyCloud — Kho lưu trữ đám mây cá nhân">
+    <meta name="twitter:description" content="Lưu trữ ảnh, video, tài liệu. Chia sẻ dễ dàng.">
+
+    <!-- ============ FAVICON (Inline SVG) ============ -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2338bdf8'/%3E%3Cstop offset='1' stop-color='%238b5cf6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Cpath d='M20 44c-4.4 0-8-3.6-8-8s3.6-8 8-8c.7 0 1.4.1 2 .3C23.4 23.6 28.4 20 34 20c6.6 0 12 5.4 12 12v.5c3.9.4 7 3.7 7 7.5 0 4.1-3.4 7.5-7.5 7.5H20z' fill='white'/%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2338bdf8'/%3E%3Cstop offset='1' stop-color='%238b5cf6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='180' height='180' fill='url(%23g)'/%3E%3Cpath d='M56 124c-12.4 0-22.5-10.1-22.5-22.5S43.6 79 56 79c2 0 3.9.3 5.6.8C65.3 66.9 79.3 57 95.5 57c18.5 0 33.5 15 33.5 33.5v1.4c11 .9 19.5 10.3 19.5 21.1 0 11.6-9.4 21-21 21H56z' fill='white'/%3E%3C/svg%3E">
+
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --primary: #38bdf8;
+            --primary-hover: #0ea5e9;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+            --glass-blur: blur(12px);
+            --danger: #ef4444;
+            --success: #22c55e;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image:
+                radial-gradient(circle at 15% 50%, rgba(56, 189, 248, 0.15), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.15), transparent 25%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* ===== LOADING OVERLAY ===== */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        .loading-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #38bdf8, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: #fff;
+            box-shadow: 0 8px 32px rgba(56, 189, 248, 0.5);
+            animation: loadingPulse 1.2s ease-in-out infinite;
+        }
+        @keyframes loadingPulse {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.15) rotate(5deg); }
+        }
+
+        /* ===== SHARE BANNER ===== */
+        .share-banner {
+            background: linear-gradient(90deg, rgba(56,189,248,0.15), rgba(139,92,246,0.15));
+            border-bottom: 1px solid rgba(56, 189, 248, 0.3);
+            padding: 12px 40px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            position: sticky;
+            top: 0;
+            z-index: 99;
+            backdrop-filter: blur(10px);
+        }
+        .share-banner i { color: var(--primary); font-size: 16px; }
+        .share-banner .badge {
+            background: rgba(56, 189, 248, 0.2);
+            color: var(--primary);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .share-banner .badge.edit {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+        .share-banner .owner-name {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+        .share-banner button {
+            margin-left: auto;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 7px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            font-family: inherit;
+            transition: background 0.2s;
+        }
+        .share-banner button:hover { background: rgba(255, 255, 255, 0.1); }
+
+        /* ===== HEADER ===== */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 40px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        /* ============ LOGO ANIMATION ============ */
+        .logo {
+            display: flex; align-items: center; gap: 14px;
+            cursor: pointer; user-select: none;
+        }
+        .logo-ring { position: relative; width: 44px; height: 44px; }
+
+        .logo-ring .logo-mark {
+            position: absolute;
+            inset: 0;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #38bdf8, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(56, 189, 248, 0.5);
+            animation: logoFloat 3.5s ease-in-out infinite;
+            will-change: transform;
+        }
+
+        @keyframes logoFloat {
+            0%   { transform: translateY(0) scale(1) rotate(0deg); }
+            25%  { transform: translateY(-3px) scale(1.03) rotate(-4deg); }
+            50%  { transform: translateY(-6px) scale(1.06) rotate(0deg); }
+            75%  { transform: translateY(-3px) scale(1.03) rotate(4deg); }
+            100% { transform: translateY(0) scale(1) rotate(0deg); }
+        }
+
+        .orbit-dot {
+            position: absolute;
+            inset: -3px;
+            border-radius: 18px;
+            animation: orbitRotate 3s linear infinite;
+            pointer-events: none;
+            will-change: transform;
+        }
+        .orbit-dot::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: 50%;
+            margin-left: -3px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #38bdf8;
+            box-shadow: 0 0 10px #38bdf8, 0 0 20px #38bdf8, 0 0 30px #38bdf8;
+        }
+
+        @keyframes orbitRotate {
+            0%   { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .logo-text {
+            font-size: 22px; font-weight: 700; letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #38bdf8, #8b5cf6);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .search-bar {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 20px; padding: 10px 20px;
+            display: flex; align-items: center; gap: 10px;
+            width: 400px; transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .search-bar:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+        }
+        .search-bar input {
+            background: transparent; border: none;
+            color: var(--text-main); width: 100%;
+            outline: none; font-size: 15px;
+        }
+        .search-bar kbd {
+            font-size: 11px;
+            background: rgba(255,255,255,0.08);
+            color: var(--text-muted);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: inherit;
+            border: 1px solid var(--border);
+        }
+
+        .user-menu-wrap { position: relative; }
+        .user-avatar-btn {
+            width: 44px; height: 44px; border-radius: 50%;
+            border: 2px solid transparent; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; color: white; font-size: 17px;
+            overflow: hidden; transition: border-color 0.2s, transform 0.2s;
+            padding: 0; background: linear-gradient(135deg, var(--primary), #8b5cf6);
+        }
+        .user-avatar-btn:hover { border-color: var(--primary); transform: scale(1.05); }
+        .user-avatar-btn img { width: 100%; height: 100%; object-fit: cover; }
+
+        .user-dropdown {
+            position: absolute; top: calc(100% + 12px); right: 0;
+            background: rgba(30, 41, 59, 0.98); backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border); border-radius: 16px;
+            width: 280px; padding: 8px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            opacity: 0; visibility: hidden; transform: translateY(-10px);
+            transition: all 0.25s; z-index: 200;
+        }
+        .user-dropdown.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .dd-user-info {
+            padding: 14px; border-bottom: 1px solid var(--border);
+            margin-bottom: 6px; display: flex; align-items: center; gap: 12px;
+        }
+        .dd-user-avatar {
+            width: 48px; height: 48px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; color: white; font-size: 20px;
+            flex-shrink: 0; overflow: hidden;
+        }
+        .dd-user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .dd-user-text { min-width: 0; flex: 1; }
+        .dd-user-text .name {
+            font-weight: 600; font-size: 15px; color: var(--text-main);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .dd-user-text .sub { font-size: 12px; color: var(--text-muted); }
+        .dd-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 11px 14px; border-radius: 10px; cursor: pointer;
+            font-size: 14px; color: var(--text-main);
+            transition: background 0.15s; border: none; background: transparent;
+            width: 100%; font-family: inherit; text-align: left;
+        }
+        .dd-item:hover { background: rgba(255, 255, 255, 0.06); }
+        .dd-item i { width: 18px; text-align: center; color: var(--text-muted); font-size: 14px; }
+
+        /* ===== MAIN ===== */
+        main { padding: 30px 40px; flex: 1; }
+        .page-header {
+            display: flex; justify-content: space-between; align-items: flex-end;
+            margin-bottom: 25px; gap: 20px; flex-wrap: wrap;
+        }
+        .page-title h1 { font-size: 30px; font-weight: 600; margin-bottom: 5px; }
+        .page-title p { color: var(--text-muted); font-size: 14px; }
+        .header-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn-new-folder, .btn-share-drive {
+            padding: 11px 20px; border-radius: 12px;
+            cursor: pointer; font-weight: 500; font-size: 14px;
+            display: flex; align-items: center; gap: 8px;
+            transition: all 0.2s; font-family: inherit;
+        }
+        .btn-new-folder {
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--primary); border: 1px solid var(--primary);
+        }
+        .btn-new-folder:hover {
+            background: var(--primary); color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(56, 189, 248, 0.3);
+        }
+        .btn-share-drive {
+            background: linear-gradient(135deg, #38bdf8, #8b5cf6);
+            color: #fff; border: none;
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+        }
+        .btn-share-drive:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(56, 189, 248, 0.5);
+        }
+
+        .breadcrumb {
+            display: flex; align-items: center; gap: 8px;
+            margin-bottom: 20px; font-size: 14px;
+            flex-wrap: wrap; min-height: 24px;
+        }
+        .breadcrumb-item {
+            color: var(--primary); cursor: pointer;
+            padding: 4px 10px; border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .breadcrumb-item:hover { background: rgba(56, 189, 248, 0.1); }
+        .breadcrumb-item.current {
+            color: var(--text-main); font-weight: 500; cursor: default;
+        }
+        .breadcrumb-item.current:hover { background: transparent; }
+        .breadcrumb-sep { color: var(--text-muted); font-size: 11px; }
+
+        .files-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 22px;
+        }
+        .file-card {
+            background: var(--bg-card); backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border); border-radius: 20px;
+            padding: 22px; display: flex; flex-direction: column;
+            transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+            position: relative; cursor: pointer;
+            will-change: transform;
+        }
+        .file-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(56, 189, 248, 0.5);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        .file-thumb {
+            width: 100%; height: 140px; border-radius: 12px;
+            margin-bottom: 16px; overflow: hidden;
+            background: rgba(15, 23, 42, 0.6);
+            display: flex; align-items: center; justify-content: center;
+            pointer-events: none; position: relative;
+        }
+        .file-thumb img, .file-thumb video {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+        .file-thumb .video-overlay {
+            position: absolute; inset: 0;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(0, 0, 0, 0.3); font-size: 36px; color: white;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+        }
+        .btn-delete-card {
+            position: absolute; top: 12px; right: 12px;
+            width: 28px; height: 28px; border-radius: 50%;
+            background: rgba(239, 68, 68, 0.85); color: #fff;
+            border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; opacity: 0;
+            transition: opacity 0.2s, transform 0.2s; z-index: 5;
+        }
+        .file-card:hover .btn-delete-card { opacity: 1; }
+        .btn-delete-card:hover { transform: scale(1.1); background: #ef4444; }
+
+        .file-icon {
+            width: 50px; height: 50px; border-radius: 12px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 24px; margin-bottom: 18px; pointer-events: none;
+        }
+        .icon-folder { background: rgba(56, 189, 248, 0.2); color: #38bdf8; }
+        .icon-english { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .icon-math { background: rgba(56, 189, 248, 0.2); color: #38bdf8; }
+        .icon-vietnamese { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .icon-logic { background: rgba(168, 85, 247, 0.2); color: #a855f7; }
+        .icon-data { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .icon-video { background: rgba(236, 72, 153, 0.2); color: #ec4899; }
+
+        .file-info { pointer-events: none; flex: 1; min-width: 0; }
+        .file-info h3 {
+            font-size: 16px; font-weight: 500; margin-bottom: 6px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .file-info p { font-size: 12.5px; color: var(--text-muted); }
+
+        .card-actions {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 18px; padding-top: 14px;
+            border-top: 1px solid var(--border); gap: 8px;
+        }
+        .btn-share, .btn-download {
+            background: transparent; color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 7px 12px; border-radius: 10px;
+            cursor: pointer; font-weight: 500;
+            transition: all 0.2s; display: flex; align-items: center;
+            gap: 6px; font-size: 12.5px; font-family: inherit;
+        }
+        .btn-share:hover, .btn-download:hover { background: var(--primary); color: #fff; }
+        .btn-download { color: #22c55e; border-color: #22c55e; }
+        .btn-download:hover { background: #22c55e; color: #fff; }
+
+        .fab {
+            position: fixed; bottom: 35px; right: 35px;
+            width: 62px; height: 62px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            color: white; border: none; font-size: 22px;
+            cursor: pointer; box-shadow: 0 10px 25px rgba(56, 189, 248, 0.4);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex; justify-content: center; align-items: center; z-index: 99;
+            will-change: transform;
+        }
+        .fab:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 15px 35px rgba(56, 189, 248, 0.6);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in { animation: fadeIn 0.4s ease forwards; }
+
+        .empty-state {
+            grid-column: 1 / -1; text-align: center;
+            padding: 60px 20px; color: var(--text-muted);
+        }
+        .empty-state i { font-size: 60px; margin-bottom: 20px; opacity: 0.3; }
+        .empty-state h3 { font-size: 20px; margin-bottom: 10px; color: var(--text-main); }
+        .empty-state p { font-size: 14px; }
+
+        .toast {
+            position: fixed; bottom: 115px; left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(10px);
+            border: 1px solid var(--primary); color: var(--text-main);
+            padding: 14px 24px; border-radius: 12px;
+            font-size: 14px; opacity: 0; transition: all 0.4s ease;
+            z-index: 9999; display: flex; align-items: center; gap: 10px;
+            pointer-events: none;
+            max-width: calc(100vw - 40px);
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(6px); display: none;
+            align-items: center; justify-content: center;
+            z-index: 1000; padding: 20px; overflow-y: auto;
+        }
+        .modal-overlay.show { display: flex; animation: fadeIn 0.2s ease; }
+        .modal {
+            background: rgba(30, 41, 59, 0.95); backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border); border-radius: 20px;
+            padding: 28px; width: 100%; max-width: 480px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: modalIn 0.3s ease; max-height: 90vh; overflow-y: auto;
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal h3 {
+            font-size: 20px; font-weight: 600; margin-bottom: 8px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .modal h3 i { color: var(--primary); }
+        .modal > p { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; line-height: 1.5; }
+        .modal input[type="text"] {
+            width: 100%; background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border); border-radius: 12px;
+            padding: 14px 16px; color: var(--text-main); font-size: 15px;
+            outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+            font-family: inherit;
+        }
+        .modal input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+        }
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block; font-size: 13px; color: var(--text-muted);
+            margin-bottom: 8px; font-weight: 500;
+        }
+
+        .perm-options { display: grid; gap: 10px; }
+        .perm-option {
+            display: flex; align-items: center; gap: 14px;
+            padding: 14px 16px; border-radius: 12px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.03);
+            cursor: pointer; transition: all 0.2s;
+        }
+        .perm-option:hover { background: rgba(255, 255, 255, 0.06); }
+        .perm-option.selected {
+            border-color: var(--primary);
+            background: rgba(56, 189, 248, 0.08);
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
+        }
+        .perm-option input { display: none; }
+        .perm-option > i {
+            width: 40px; height: 40px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; flex-shrink: 0;
+            background: rgba(56, 189, 248, 0.15); color: var(--primary);
+        }
+        .perm-option[data-perm="edit"] > i {
+            background: rgba(34, 197, 94, 0.15); color: #22c55e;
+        }
+        .perm-option > div { flex: 1; min-width: 0; }
+        .perm-option strong {
+            display: block; font-size: 14px; color: var(--text-main);
+            font-weight: 600; margin-bottom: 2px;
+        }
+        .perm-option small { font-size: 12px; color: var(--text-muted); }
+
+        .share-link-wrap { display: flex; gap: 8px; }
+        .share-link-wrap input {
+            flex: 1; font-size: 13px !important;
+            background: rgba(15, 23, 42, 0.6) !important;
+            color: var(--text-muted) !important;
+        }
+        .btn-copy {
+            padding: 0 18px; border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            color: #fff; border: none; cursor: pointer;
+            font-size: 14px; font-family: inherit;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .btn-copy:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(56, 189, 248, 0.4);
+        }
+
+        .share-info {
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 10px; padding: 12px 14px;
+            font-size: 12.5px; color: var(--text-muted);
+            margin-top: 14px; line-height: 1.6;
+            display: flex; gap: 10px; align-items: flex-start;
+        }
+        .share-info i { color: var(--primary); margin-top: 2px; flex-shrink: 0; }
+        .share-info.warning {
+            background: rgba(245, 158, 11, 0.08);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+        .share-info.warning i { color: #f59e0b; }
+
+        .avatar-picker {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 10px; margin-top: 8px;
+        }
+        .avatar-option {
+            aspect-ratio: 1; border-radius: 50%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; font-weight: 700; color: white;
+            border: 3px solid transparent;
+            transition: transform 0.2s, border-color 0.2s;
+            overflow: hidden; position: relative;
+        }
+        .avatar-option:hover { transform: scale(1.08); }
+        .avatar-option.selected {
+            border-color: var(--primary); transform: scale(1.08);
+            box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.2);
+        }
+        .avatar-option img { width: 100%; height: 100%; object-fit: cover; }
+
+        .avatar-upload-btn {
+            display: flex; align-items: center; justify-content: center;
+            gap: 6px; margin-top: 10px; font-size: 13px;
+            color: var(--primary); cursor: pointer; padding: 8px;
+            border-radius: 10px; border: 1px dashed var(--primary);
+            transition: background 0.2s; background: transparent;
+            width: 100%; font-family: inherit;
+        }
+        .avatar-upload-btn:hover { background: rgba(56, 189, 248, 0.1); }
+
+        .modal-actions {
+            display: flex; justify-content: flex-end; gap: 10px;
+            margin-top: 22px;
+        }
+        .modal-actions button {
+            padding: 10px 20px; border-radius: 10px;
+            border: none; cursor: pointer; font-weight: 500;
+            font-size: 14px; font-family: inherit; transition: all 0.2s;
+        }
+        .modal-actions .btn-cancel {
+            background: rgba(255, 255, 255, 0.05); color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+        .modal-actions .btn-cancel:hover { background: rgba(255, 255, 255, 0.1); }
+        .modal-actions .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #8b5cf6); color: #fff;
+        }
+        .modal-actions .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(56, 189, 248, 0.4);
+        }
+        .modal-actions .btn-danger { background: #ef4444; color: #fff; }
+        .modal-actions .btn-danger:hover {
+            background: #dc2626; transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+        }
+
+        .drop-overlay {
+            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(8px); z-index: 9998; display: none;
+            align-items: center; justify-content: center;
+            border: 4px dashed var(--primary); pointer-events: none;
+        }
+        .drop-overlay.show { display: flex; animation: fadeIn 0.2s ease; }
+        .drop-overlay-content { text-align: center; color: var(--primary); }
+        .drop-overlay-content i {
+            font-size: 80px; margin-bottom: 20px;
+            animation: logoFloat 1.5s ease-in-out infinite;
+        }
+        .drop-overlay-content h2 {
+            font-size: 28px; margin-bottom: 8px; color: var(--text-main);
+        }
+        .drop-overlay-content p { color: var(--text-muted); font-size: 15px; }
+
+        body.view-only .btn-new-folder,
+        body.view-only .fab,
+        body.view-only .btn-delete-card,
+        body.view-only .header-buttons .btn-new-folder,
+        body.view-only .user-menu-wrap { display: none !important; }
+
+        @media (max-width: 640px) {
+            header { padding: 12px 16px; gap: 10px; flex-wrap: wrap; }
+            .search-bar { width: 100%; order: 3; }
+            .search-bar kbd { display: none; }
+            .logo-text { display: none; }
+            main { padding: 20px 16px; }
+            .page-header { flex-direction: column; align-items: stretch; }
+            .header-buttons { flex-direction: column; }
+            .files-grid { grid-template-columns: 1fr; }
+            .fab { bottom: 20px; right: 20px; }
+            .share-banner { padding: 10px 16px; font-size: 12px; flex-wrap: wrap; }
+            .share-banner .owner-name { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"><i class="fa-solid fa-cloud"></i></div>
+    </div>
+
+    <!-- Share banner -->
+    <div class="share-banner" id="shareBanner" style="display:none;">
+        <i class="fa-solid fa-share-nodes"></i>
+        <span>Bạn đang xem kho của <span class="owner-name" id="shareOwnerName">—</span></span>
+        <span class="badge" id="shareBannerBadge">Chỉ xem</span>
+        <button onclick="exitShareView()">Thoát chế độ chia sẻ</button>
+    </div>
+
+    <!-- Header -->
+    <header id="mainHeader">
+        <div class="logo" onclick="goHome()" title="Về trang chủ">
+            <div class="logo-ring">
+                <div class="logo-mark"><i class="fa-solid fa-cloud"></i></div>
+                <div class="orbit-dot"></div>
+            </div>
+            <span class="logo-text">MyCloud</span>
+        </div>
+        
+        <div class="search-bar">
+            <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
+            <input type="text" id="searchInput" placeholder="Tìm kiếm trong thư mục..." oninput="onSearchInput()" autocomplete="off">
+            <kbd>Ctrl F</kbd>
+        </div>
+
+        <div class="user-menu-wrap">
+            <button class="user-avatar-btn" id="headerAvatar" onclick="toggleUserDropdown()" aria-label="Menu người dùng"></button>
+            <div class="user-dropdown" id="userDropdown">
+                <div class="dd-user-info">
+                    <div class="dd-user-avatar" id="ddAvatar"></div>
+                    <div class="dd-user-text">
+                        <div class="name" id="ddName">Người dùng</div>
+                        <div class="sub">Kho lưu trữ cá nhân</div>
+                    </div>
+                </div>
+                <button class="dd-item" onclick="openProfileModal()">
+                    <i class="fa-solid fa-user-gear"></i> Cài đặt hồ sơ
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="page-header">
+            <div class="page-title">
+                <h1 id="mainTitle">Tài liệu của tôi</h1>
+                <p>Xin chào, <strong id="welcomeName" style="color: var(--primary);">bạn</strong>! Kéo thả file vào đây để tải lên nhanh.</p>
+            </div>
+            <div class="header-buttons">
+                <button class="btn-share-drive" onclick="openShareModal('drive')" title="Chia sẻ toàn bộ kho">
+                    <i class="fa-solid fa-share-nodes"></i> Chia sẻ kho
+                </button>
+                <button class="btn-new-folder" onclick="openFolderModal()" title="Tạo thư mục mới">
+                    <i class="fa-solid fa-folder-plus"></i> Thư mục mới
+                </button>
+            </div>
+        </div>
+
+        <div class="breadcrumb" id="breadcrumb"></div>
+        <div class="files-grid" id="filesGrid"></div>
+    </main>
+
+    <button class="fab" onclick="document.getElementById('fileInput').click()" title="Tải file lên (Ctrl+U)" aria-label="Tải file lên">
+        <i class="fa-solid fa-plus"></i>
+    </button>
+    <input type="file" id="fileInput" style="display: none;" multiple onchange="handleUpload(event)">
+
+    <div class="toast" id="toast">
+        <i class="fa-solid fa-circle-check" style="color: #22c55e;"></i>
+        <span id="toastMsg">Thông báo</span>
+    </div>
+
+    <div class="drop-overlay" id="dropOverlay">
+        <div class="drop-overlay-content">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <h2>Thả file vào đây</h2>
+            <p>Ảnh, video, tài liệu... đều được chấp nhận</p>
+        </div>
+    </div>
+
+    <!-- Modal: Share -->
+    <div class="modal-overlay" id="shareModal">
+        <div class="modal">
+            <h3><i class="fa-solid fa-share-nodes"></i> Chia sẻ</h3>
+            <p id="shareSubtitle">Chọn quyền truy cập và copy link để gửi cho người khác.</p>
+            <div class="form-group">
+                <label>Quyền truy cập</label>
+                <div class="perm-options">
+                    <label class="perm-option selected" data-perm="view" onclick="selectPerm('view')">
+                        <input type="radio" name="sharePerm" value="view" checked>
+                        <i class="fa-solid fa-eye"></i>
+                        <div>
+                            <strong>Chỉ xem</strong>
+                            <small>Người nhận chỉ xem và tải file, không thể sửa/xóa</small>
+                        </div>
+                    </label>
+                    <label class="perm-option" data-perm="edit" onclick="selectPerm('edit')">
+                        <input type="radio" name="sharePerm" value="edit">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                        <div>
+                            <strong>Chỉnh sửa</strong>
+                            <small>Người nhận có thể thêm, xóa, sửa file trong kho</small>
+                        </div>
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Link chia sẻ</label>
+                <div class="share-link-wrap">
+                    <input type="text" id="shareLinkInput" readonly value="Đang tạo link...">
+                    <button class="btn-copy" onclick="copyShareLink()" title="Copy link">
+                        <i class="fa-solid fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="share-info" id="shareInfoBox">
+                <i class="fa-solid fa-circle-info"></i>
+                <div id="shareInfoText">Đang chuẩn bị dữ liệu...</div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal('shareModal')">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Tạo thư mục -->
+    <div class="modal-overlay" id="folderModal">
+        <div class="modal">
+            <h3><i class="fa-solid fa-folder-plus"></i> Tạo thư mục mới</h3>
+            <p>Nhập tên thư mục bạn muốn tạo:</p>
+            <input type="text" id="folderNameInput" placeholder="Ví dụ: Tài liệu học tập..." onkeydown="if(event.key==='Enter') createFolder()">
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal('folderModal')">Hủy</button>
+                <button class="btn-primary" onclick="createFolder()">Tạo thư mục</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Xác nhận xóa -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal">
+            <h3><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> Xác nhận xóa</h3>
+            <p id="deleteMsg">Bạn có chắc muốn xóa mục này?</p>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal('deleteModal')">Hủy</button>
+                <button class="btn-danger" onclick="confirmDelete()">Xóa</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Cài đặt hồ sơ -->
+    <div class="modal-overlay" id="profileModal">
+        <div class="modal">
+            <h3><i class="fa-solid fa-user-gear"></i> Cài đặt hồ sơ</h3>
+            <p>Cập nhật tên hiển thị và ảnh đại diện của bạn.</p>
+            <div class="form-group">
+                <label>Tên người dùng</label>
+                <input type="text" id="profileName" maxlength="30" placeholder="Tên của bạn">
+            </div>
+            <div class="form-group">
+                <label>Avatar</label>
+                <div class="avatar-picker" id="profileAvatarPicker"></div>
+                <button type="button" class="avatar-upload-btn" onclick="document.getElementById('profileAvatarUpload').click()">
+                    <i class="fa-solid fa-upload"></i> Tải ảnh từ máy
+                </button>
+                <input type="file" id="profileAvatarUpload" accept="image/*" style="display:none;" onchange="handleProfileAvatarUpload(event)">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal('profileModal')">Hủy</button>
+                <button class="btn-primary" onclick="saveProfile()">Lưu thay đổi</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ====== HẰNG SỐ ====== */
+        const AVATAR_PRESETS = [
+            'linear-gradient(135deg, #38bdf8, #8b5cf6)',
+            'linear-gradient(135deg, #f59e0b, #ef4444)',
+            'linear-gradient(135deg, #22c55e, #14b8a6)',
+            'linear-gradient(135deg, #ec4899, #8b5cf6)',
+            'linear-gradient(135deg, #f97316, #eab308)',
+            'linear-gradient(135deg, #06b6d4, #3b82f6)',
+            'linear-gradient(135deg, #a855f7, #ec4899)',
+            'linear-gradient(135deg, #10b981, #22c55e)'
+        ];
+        const MAX_SHARE_SIZE = 3 * 1024 * 1024;
+
+        /* ====== STATE ====== */
+        let profile = { name: 'Người dùng', avatar: AVATAR_PRESETS[0] };
+        let items = [];
+        let currentFolderId = null;
+        let idCounter = 0;
+        let pendingDeleteId = null;
+        let db = null;
+        let profileTempAvatar = '';
+        let shareTarget = 'drive';
+        let sharePerm = 'view';
+        let isViewMode = false;
+        let searchDebounce = null;
+
+        /* =========================================================
+           INDEXEDDB
+           ========================================================= */
+        function openDB() {
+            return new Promise((resolve, reject) => {
+                const req = indexedDB.open('mycloud_db', 2);
+                req.onupgradeneeded = (e) => {
+                    const d = e.target.result;
+                    if (!d.objectStoreNames.contains('items')) {
+                        d.createObjectStore('items', { keyPath: 'id' });
+                    }
+                };
+                req.onsuccess = (e) => { db = e.target.result; resolve(db); };
+                req.onerror = (e) => reject(e.target.error);
+            });
+        }
+        function dbGetAll(storeName) {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(storeName, 'readonly');
+                const req = tx.objectStore(storeName).getAll();
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+            });
+        }
+        function dbPut(storeName, value) {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(storeName, 'readwrite');
+                const req = tx.objectStore(storeName).put(value);
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+            });
+        }
+        function dbDelete(storeName, key) {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(storeName, 'readwrite');
+                const req = tx.objectStore(storeName).delete(key);
+                req.onsuccess = () => resolve();
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        /* =========================================================
+           PROFILE
+           ========================================================= */
+        function loadProfile() {
+            try {
+                const saved = localStorage.getItem('mycloud_profile');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    profile.name = parsed.name || profile.name;
+                    profile.avatar = parsed.avatar || profile.avatar;
+                }
+            } catch (e) { console.warn(e); }
+        }
+        function saveProfileToStorage() {
+            try {
+                localStorage.setItem('mycloud_profile', JSON.stringify(profile));
+            } catch (e) {
+                showToast('Không thể lưu hồ sơ (bộ nhớ đầy?)', 'fa-circle-exclamation', '#f59e0b');
+            }
+        }
+
+        /* =========================================================
+           TOAST
+           ========================================================= */
+        let toastTimer = null;
+        function showToast(message, icon = 'fa-circle-check', color = '#22c55e') {
+            const toast = document.getElementById('toast');
+            toast.querySelector('i').className = `fa-solid ${icon}`;
+            toast.querySelector('i').style.color = color;
+            document.getElementById('toastMsg').textContent = message;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        /* =========================================================
+           HELPERS
+           ========================================================= */
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        function formatFileSize(bytes) {
+            if (!bytes) return '0 B';
+            const k = 1024, sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        function getFileType(name) {
+            const n = name.toLowerCase();
+            if (n.endsWith('.pdf')) return 'pdf';
+            if (n.match(/\.(doc|docx)$/)) return 'word';
+            if (n.match(/\.(xls|xlsx|csv)$/)) return 'excel';
+            if (n.match(/\.(jpg|jpeg|png|gif|webp|svg|bmp)$/)) return 'image';
+            if (n.match(/\.(mp4|avi|mov|mkv|webm|m4v)$/)) return 'video';
+            if (n.match(/\.(mp3|wav|ogg|m4a)$/)) return 'audio';
+            if (n.match(/\.(zip|rar|7z|tar|gz)$/)) return 'zip';
+            if (n.match(/\.(txt|md|html|css|js|json)$/)) return 'code';
+            return 'other';
+        }
+        function getFileIcon(name) {
+            const t = getFileType(name);
+            switch (t) {
+                case 'pdf': return { icon: 'fa-file-pdf', color: 'icon-english' };
+                case 'word': return { icon: 'fa-file-word', color: 'icon-math' };
+                case 'excel': return { icon: 'fa-file-excel', color: 'icon-vietnamese' };
+                case 'image': return { icon: 'fa-file-image', color: 'icon-logic' };
+                case 'video': return { icon: 'fa-file-video', color: 'icon-video' };
+                case 'audio': return { icon: 'fa-file-audio', color: 'icon-logic' };
+                case 'zip': return { icon: 'fa-file-zipper', color: 'icon-data' };
+                case 'code': return { icon: 'fa-file-code', color: 'icon-math' };
+                default: return { icon: 'fa-file', color: 'icon-math' };
+            }
+        }
+        function countChildren(folderId) {
+            return items.filter(i => i.parentId === folderId).length;
+        }
+        function getItem(id) { return items.find(i => i.id === id); }
+        function fileToDataURL(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.readAsDataURL(file);
+            });
+        }
+        function blobToBase64(blob) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const result = reader.result;
+                    const idx = result.indexOf(',');
+                    resolve(result.substring(idx + 1));
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+        }
+        function base64ToBlob(b64, mimeType = '') {
+            try {
+                const byteChars = atob(b64);
+                const byteNums = new Array(byteChars.length);
+                for (let i = 0; i < byteChars.length; i++) byteNums[i] = byteChars.charCodeAt(i);
+                return new Blob([new Uint8Array(byteNums)], { type: mimeType });
+            } catch (e) {
+                console.error('base64ToBlob error:', e);
+                return null;
+            }
+        }
+
+        /* =========================================================
+           UPLOAD
+           ========================================================= */
+        async function handleUpload(event) {
+            const files = event.target.files;
+            if (!files.length) return;
+            await processFiles(files);
+            event.target.value = '';
+        }
+        async function processFiles(files) {
+            let successCount = 0;
+            for (let file of files) {
+                try {
+                    const id = 'f_' + (idCounter++);
+                    const item = {
+                        id, type: 'file', name: file.name,
+                        parentId: currentFolderId, size: file.size,
+                        mimeType: file.type || '',
+                        fileType: getFileType(file.name),
+                        blob: file, date: new Date().toLocaleDateString('vi-VN')
+                    };
+                    await dbPut('items', item);
+                    items.push(item);
+                    successCount++;
+                } catch (err) {
+                    console.error('Lỗi lưu file:', file.name, err);
+                    showToast(`Không thể lưu "${file.name}" (bộ nhớ đầy?)`, 'fa-circle-exclamation', '#ef4444');
+                }
+            }
+            if (successCount > 0) showToast(`Đã tải lên ${successCount} file thành công!`);
+            render();
+        }
+
+        /* =========================================================
+           FOLDER
+           ========================================================= */
+        function openFolderModal() {
+            document.getElementById('folderNameInput').value = '';
+            document.getElementById('folderModal').classList.add('show');
+            setTimeout(() => document.getElementById('folderNameInput').focus(), 100);
+        }
+        async function createFolder() {
+            const input = document.getElementById('folderNameInput');
+            const name = input.value.trim();
+            if (!name) {
+                showToast('Vui lòng nhập tên thư mục!', 'fa-circle-exclamation', '#f59e0b');
+                return;
+            }
+            const id = 'd_' + (idCounter++);
+            const item = {
+                id, type: 'folder', name, parentId: currentFolderId,
+                date: new Date().toLocaleDateString('vi-VN')
+            };
+            await dbPut('items', item);
+            items.push(item);
+            closeModal('folderModal');
+            showToast(`Đã tạo thư mục "${name}"`);
+            render();
+        }
+
+        /* =========================================================
+           DELETE
+           ========================================================= */
+        function askDelete(id) {
+            if (isViewMode && sharePerm === 'view') {
+                showToast('Bạn chỉ có quyền xem, không thể xóa!', 'fa-lock', '#f59e0b');
+                return;
+            }
+            const item = getItem(id);
+            if (!item) return;
+            pendingDeleteId = id;
+            let msg;
+            if (item.type === 'folder') {
+                const count = countChildren(id);
+                msg = count > 0
+                    ? `Thư mục "${item.name}" chứa ${count} mục bên trong. Tất cả sẽ bị xóa vĩnh viễn. Bạn có chắc không?`
+                    : `Bạn có chắc muốn xóa thư mục "${item.name}"?`;
+            } else {
+                msg = `Bạn có chắc muốn xóa file "${item.name}"?`;
+            }
+            document.getElementById('deleteMsg').textContent = msg;
+            document.getElementById('deleteModal').classList.add('show');
+        }
+        async function confirmDelete() {
+            if (!pendingDeleteId) return;
+            const item = getItem(pendingDeleteId);
+            if (item) {
+                await deleteRecursive(pendingDeleteId);
+                showToast(`Đã xóa "${item.name}"`, 'fa-trash', '#ef4444');
+            }
+            pendingDeleteId = null;
+            closeModal('deleteModal');
+            render();
+        }
+        async function deleteRecursive(id) {
+            const children = items.filter(i => i.parentId === id);
+            for (const c of children) await deleteRecursive(c.id);
+            await dbDelete('items', id);
+            const idx = items.findIndex(i => i.id === id);
+            if (idx !== -1) items.splice(idx, 1);
+        }
+
+        /* =========================================================
+           NAVIGATION
+           ========================================================= */
+        function goHome() {
+            currentFolderId = null;
+            document.getElementById('searchInput').value = '';
+            render();
+        }
+        function openFolder(id) {
+            currentFolderId = id;
+            document.getElementById('searchInput').value = '';
+            render();
+        }
+        function navigateTo(id) {
+            currentFolderId = id;
+            document.getElementById('searchInput').value = '';
+            render();
+        }
+
+        /* =========================================================
+           MODAL HELPERS
+           ========================================================= */
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.classList.remove('show');
+                    pendingDeleteId = null;
+                }
+            });
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay.show').forEach(m => m.classList.remove('show'));
+                pendingDeleteId = null;
+                document.getElementById('userDropdown').classList.remove('show');
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                if (!document.querySelector('.modal-overlay.show')) {
+                    e.preventDefault();
+                    document.getElementById('searchInput').focus();
+                    document.getElementById('searchInput').select();
+                }
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'u') {
+                if (!document.querySelector('.modal-overlay.show') && !isViewMode) {
+                    e.preventDefault();
+                    document.getElementById('fileInput').click();
+                }
+            }
+        });
+
+        /* =========================================================
+           USER DROPDOWN
+           ========================================================= */
+        function toggleUserDropdown() {
+            document.getElementById('userDropdown').classList.toggle('show');
+        }
+        document.addEventListener('click', (e) => {
+            const wrap = document.querySelector('.user-menu-wrap');
+            if (wrap && !wrap.contains(e.target)) {
+                document.getElementById('userDropdown').classList.remove('show');
+            }
+        });
+
+        /* =========================================================
+           RENDER USER UI
+           ========================================================= */
+        function renderUserUI() {
+            const av = profile.avatar || AVATAR_PRESETS[0];
+            const isImage = av.startsWith('data:') || av.startsWith('http') || av.startsWith('blob:');
+            const headerAv = document.getElementById('headerAvatar');
+            const ddAv = document.getElementById('ddAvatar');
+            if (isImage) {
+                headerAv.style.background = '#1e293b';
+                headerAv.innerHTML = `<img src="${av}" alt="avatar">`;
+                ddAv.style.background = '#1e293b';
+                ddAv.innerHTML = `<img src="${av}" alt="avatar">`;
+            } else {
+                const initial = (profile.name || 'U').charAt(0).toUpperCase();
+                headerAv.style.background = av;
+                headerAv.innerHTML = initial;
+                ddAv.style.background = av;
+                ddAv.innerHTML = initial;
+            }
+            document.getElementById('ddName').textContent = profile.name || 'Người dùng';
+            document.getElementById('welcomeName').textContent = profile.name || 'bạn';
+        }
+
+        /* =========================================================
+           PROFILE MODAL
+           ========================================================= */
+        function openProfileModal() {
+            document.getElementById('userDropdown').classList.remove('show');
+            document.getElementById('profileName').value = profile.name;
+            profileTempAvatar = profile.avatar;
+            renderAvatarPicker('profileAvatarPicker', profileTempAvatar, (g) => { profileTempAvatar = g; });
+            document.getElementById('profileModal').classList.add('show');
+        }
+        function saveProfile() {
+            const name = document.getElementById('profileName').value.trim();
+            if (!name) {
+                showToast('Tên không được để trống!', 'fa-circle-exclamation', '#f59e0b');
+                return;
+            }
+            profile.name = name;
+            profile.avatar = profileTempAvatar;
+            saveProfileToStorage();
+            renderUserUI();
+            closeModal('profileModal');
+            showToast('Đã lưu thay đổi hồ sơ!');
+        }
+        async function handleProfileAvatarUpload(event) {
+            const file = event.target.files[0];
+            if (!file || !file.type.startsWith('image/')) {
+                showToast('Vui lòng chọn file ảnh!', 'fa-circle-exclamation', '#f59e0b');
+                return;
+            }
+            if (file.size > 2 * 1024 * 1024) {
+                showToast('Ảnh quá lớn (tối đa 2MB)!', 'fa-circle-exclamation', '#f59e0b');
+                return;
+            }
+            const dataUrl = await fileToDataURL(file);
+            profileTempAvatar = dataUrl;
+            renderAvatarPicker('profileAvatarPicker', dataUrl, (g) => { profileTempAvatar = g; });
+            event.target.value = '';
+        }
+        function renderAvatarPicker(containerId, currentVal, onSelect) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            if (currentVal && (currentVal.startsWith('data:') || currentVal.startsWith('http') || currentVal.startsWith('blob:'))) {
+                const div = document.createElement('div');
+                div.className = 'avatar-option selected';
+                div.innerHTML = `<img src="${currentVal}" alt="avatar">`;
+                div.onclick = () => {
+                    container.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
+                    div.classList.add('selected');
+                    onSelect(currentVal);
+                };
+                container.appendChild(div);
+            }
+            AVATAR_PRESETS.forEach(gradient => {
+                const div = document.createElement('div');
+                div.className = 'avatar-option' + (gradient === currentVal ? ' selected' : '');
+                div.style.background = gradient;
+                div.innerHTML = '<i class="fa-solid fa-user"></i>';
+                div.onclick = () => {
+                    container.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
+                    div.classList.add('selected');
+                    onSelect(gradient);
+                };
+                container.appendChild(div);
+            });
+        }
+
+        /* =========================================================
+           SHARE
+           ========================================================= */
+        function selectPerm(perm) {
+            sharePerm = perm;
+            document.querySelectorAll('.perm-option').forEach(el => {
+                el.classList.toggle('selected', el.dataset.perm === perm);
+            });
+            buildAndShowLink();
+        }
+        function openShareModal(target = 'drive') {
+            shareTarget = target;
+            sharePerm = 'view';
+            document.querySelectorAll('.perm-option').forEach(el => {
+                el.classList.toggle('selected', el.dataset.perm === 'view');
+            });
+            document.getElementById('shareLinkInput').value = 'Đang tạo link...';
+            document.getElementById('shareInfoBox').className = 'share-info';
+            document.getElementById('shareInfoText').textContent = 'Đang chuẩn bị dữ liệu...';
+            if (target === 'drive') {
+                document.getElementById('shareSubtitle').textContent = `Chia sẻ toàn bộ ${items.length} mục trong kho của bạn.`;
+            } else {
+                const item = getItem(target);
+                document.getElementById('shareSubtitle').textContent = `Chia sẻ "${item ? item.name : 'mục'}" với người khác.`;
+            }
+            document.getElementById('shareModal').classList.add('show');
+            buildAndShowLink();
+        }
+        async function buildAndShowLink() {
+            const input = document.getElementById('shareLinkInput');
+            const infoBox = document.getElementById('shareInfoBox');
+            const infoText = document.getElementById('shareInfoText');
+            input.value = 'Đang tạo link...';
+            infoBox.className = 'share-info';
+            infoText.textContent = 'Đang mã hóa dữ liệu...';
+            try {
+                let itemsToShare;
+                if (shareTarget === 'drive') {
+                    itemsToShare = items;
+                } else {
+                    const rootItem = getItem(shareTarget);
+                    if (!rootItem) throw new Error('Không tìm thấy mục');
+                    itemsToShare = [rootItem];
+                    if (rootItem.type === 'folder') {
+                        const collectChildren = (folderId) => {
+                            const kids = items.filter(i => i.parentId === folderId);
+                            kids.forEach(k => {
+                                itemsToShare.push(k);
+                                if (k.type === 'folder') collectChildren(k.id);
+                            });
+                        };
+                        collectChildren(rootItem.id);
+                    }
+                }
+                const encodedItems = [];
+                let totalB64Size = 0;
+                let skippedFiles = 0;
+                for (const item of itemsToShare) {
+                    const baseItem = {
+                        id: item.id, type: item.type, name: item.name,
+                        parentId: item.parentId, date: item.date
+                    };
+                    if (item.type === 'file') {
+                        baseItem.size = item.size;
+                        baseItem.mimeType = item.mimeType;
+                        baseItem.fileType = item.fileType;
+                        if (item.blob && item.size <= 2 * 1024 * 1024) {
+                            try {
+                                const b64 = await blobToBase64(item.blob);
+                                if (totalB64Size + b64.length > MAX_SHARE_SIZE) {
+                                    skippedFiles++;
+                                    baseItem.skipped = true;
+                                } else {
+                                    totalB64Size += b64.length;
+                                    baseItem.data = b64;
+                                }
+                            } catch (e) {
+                                console.error(e);
+                                baseItem.skipped = true;
+                                skippedFiles++;
+                            }
+                        } else if (item.blob) {
+                            skippedFiles++;
+                            baseItem.skipped = true;
+                        }
+                    }
+                    encodedItems.push(baseItem);
+                }
+                const package_ = {
+                    v: 1, perm: sharePerm,
+                    owner: { name: profile.name, avatar: profile.avatar },
+                    ts: Date.now(), items: encodedItems
+                };
+                const jsonStr = JSON.stringify(package_);
+                const b64 = btoa(unescape(encodeURIComponent(jsonStr)));
+                const urlSafe = b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+                const baseUrl = location.origin + location.pathname;
+                const shareUrl = `${baseUrl}?s=${urlSafe}`;
+                input.value = shareUrl;
+                const totalSize = formatFileSize(totalB64Size * 0.75);
+                if (skippedFiles > 0) {
+                    infoBox.className = 'share-info warning';
+                    infoText.innerHTML = `⚠️ <strong>${skippedFiles} file</strong> quá lớn (>2MB) không được nhúng vào link.<br>Người nhận sẽ thấy các file còn lại (${itemsToShare.length - skippedFiles} mục, ~${totalSize}).<br><br>💡 Để chia sẻ file lớn, cần kết nối backend (Firebase/Supabase).`;
+                } else {
+                    infoBox.className = 'share-info';
+                    infoText.innerHTML = `✅ Link chứa <strong>${itemsToShare.length} mục</strong> (~${totalSize}).<br>Người nhận mở link sẽ xem được toàn bộ file ngay cả trên máy khác.`;
+                }
+                if (shareUrl.length > 60000) {
+                    infoBox.className = 'share-info warning';
+                    infoText.innerHTML += `<br><br>⚠️ Link khá dài (>60KB). Một số ứng dụng chat có thể cắt bớt link khi gửi.`;
+                }
+            } catch (err) {
+                console.error(err);
+                input.value = 'Lỗi tạo link';
+                infoBox.className = 'share-info warning';
+                infoText.textContent = 'Không thể tạo link chia sẻ. Vui lòng thử lại.';
+            }
+        }
+        async function copyShareLink() {
+            const input = document.getElementById('shareLinkInput');
+            if (!input.value || input.value === 'Đang tạo link...' || input.value === 'Lỗi tạo link') {
+                showToast('Link chưa sẵn sàng!', 'fa-circle-exclamation', '#f59e0b');
+                return;
+            }
+            try {
+                await navigator.clipboard.writeText(input.value);
+                showToast('Đã copy link chia sẻ!', 'fa-link', '#38bdf8');
+            } catch (e) {
+                input.select();
+                document.execCommand('copy');
+                showToast('Đã copy link!', 'fa-link', '#38bdf8');
+            }
+        }
+        function shareItem(id) { openShareModal(id); }
+
+        /* =========================================================
+           SHARE VIEW MODE
+           ========================================================= */
+        function checkShareLink() {
+            const params = new URLSearchParams(location.search);
+            const s = params.get('s');
+            if (!s) return false;
+            try {
+                let b64 = s.replace(/-/g, '+').replace(/_/g, '/');
+                while (b64.length % 4) b64 += '=';
+                const jsonStr = decodeURIComponent(escape(atob(b64)));
+                const data = JSON.parse(jsonStr);
+                if (!data.items) throw new Error('Dữ liệu không hợp lệ');
+                items = data.items.map(it => {
+                    const base = { ...it };
+                    if (it.type === 'file' && it.data) {
+                        base.blob = base64ToBlob(it.data, it.mimeType || '');
+                    } else if (it.type === 'file' && it.skipped) {
+                        base.blob = null;
+                        base.skipped = true;
+                    }
+                    delete base.data;
+                    return base;
+                });
+                idCounter = 1;
+                items.forEach(i => {
+                    const m = i.id.match(/^[fd]_(\d+)$/);
+                    if (m && +m[1] >= idCounter) idCounter = +m[1] + 1;
+                });
+                isViewMode = true;
+                sharePerm = data.perm || 'view';
+                document.getElementById('shareBanner').style.display = 'flex';
+                document.getElementById('shareOwnerName').textContent = data.owner?.name || 'Người dùng';
+                const badge = document.getElementById('shareBannerBadge');
+                badge.textContent = sharePerm === 'edit' ? 'Chỉnh sửa' : 'Chỉ xem';
+                badge.className = 'badge' + (sharePerm === 'edit' ? ' edit' : '');
+                document.getElementById('mainTitle').textContent = 'Kho được chia sẻ';
+                document.getElementById('welcomeName').textContent = data.owner?.name || 'Người dùng';
+                document.title = `Kho của ${data.owner?.name || 'ai đó'} — MyCloud`;
+                if (sharePerm === 'view') document.body.classList.add('view-only');
+                return true;
+            } catch (err) {
+                console.error('Lỗi đọc link chia sẻ:', err);
+                showToast('Link chia sẻ không hợp lệ!', 'fa-circle-exclamation', '#ef4444');
+                return false;
+            }
+        }
+        function exitShareView() {
+            if (!confirm('Thoát chế độ chia sẻ? Bạn sẽ quay về kho của mình.')) return;
+            location.href = location.origin + location.pathname;
+        }
+
+        /* =========================================================
+           BREADCRUMB + RENDER
+           ========================================================= */
+        function renderBreadcrumb() {
+            const bc = document.getElementById('breadcrumb');
+            bc.innerHTML = '';
+            const home = document.createElement('span');
+            home.className = 'breadcrumb-item' + (currentFolderId === null ? ' current' : '');
+            home.innerHTML = '<i class="fa-solid fa-house" style="font-size:11px;margin-right:6px;"></i>Trang chủ';
+            home.onclick = () => navigateTo(null);
+            bc.appendChild(home);
+            if (currentFolderId === null) return;
+            const path = [];
+            let id = currentFolderId;
+            while (id) {
+                const folder = getItem(id);
+                if (!folder) break;
+                path.unshift(folder);
+                id = folder.parentId;
+            }
+            path.forEach((folder, idx) => {
+                const sep = document.createElement('i');
+                sep.className = 'fa-solid fa-chevron-right breadcrumb-sep';
+                bc.appendChild(sep);
+                const item = document.createElement('span');
+                item.className = 'breadcrumb-item' + (idx === path.length - 1 ? ' current' : '');
+                item.textContent = folder.name;
+                if (idx !== path.length - 1) item.onclick = () => navigateTo(folder.id);
+                bc.appendChild(item);
+            });
+        }
+        function onSearchInput() {
+            clearTimeout(searchDebounce);
+            searchDebounce = setTimeout(render, 150);
+        }
+        function render() {
+            renderBreadcrumb();
+            const grid = document.getElementById('filesGrid');
+            const searchInput = document.getElementById('searchInput').value.trim().toLowerCase();
+            grid.innerHTML = '';
+            let filtered = items.filter(i => i.parentId === currentFolderId);
+            if (searchInput) filtered = filtered.filter(i => i.name.toLowerCase().includes(searchInput));
+            filtered.sort((a, b) => {
+                if (a.type !== b.type) return a.type === 'folder' ? -1 : 1;
+                return a.name.localeCompare(b.name, 'vi');
+            });
+            if (filtered.length === 0) {
+                const empty = document.createElement('div');
+                empty.className = 'empty-state';
+                if (searchInput) {
+                    empty.innerHTML = `<i class="fa-solid fa-magnifying-glass"></i>
+                        <h3>Không tìm thấy kết quả</h3>
+                        <p>Không có mục nào khớp với "${escapeHtml(searchInput)}"</p>`;
+                } else if (isViewMode) {
+                    empty.innerHTML = `<i class="fa-regular fa-folder-open"></i>
+                        <h3>Kho này trống</h3>
+                        <p>Người dùng chưa chia sẻ file nào.</p>`;
+                } else {
+                    empty.innerHTML = `<i class="fa-regular fa-folder-open"></i>
+                        <h3>${currentFolderId === null ? 'Chưa có tài liệu nào' : 'Thư mục trống'}</h3>
+                        <p>Kéo thả file vào đây hoặc bấm nút <strong>+</strong> để tải lên</p>`;
+                }
+                grid.appendChild(empty);
+                return;
+            }
+            filtered.forEach((item, i) => {
+                const card = createCard(item);
+                card.style.animationDelay = (i * 0.03) + 's';
+                grid.appendChild(card);
+            });
+        }
+        function createCard(item) {
+            const card = document.createElement('div');
+            card.className = 'file-card animate-in';
+            let previewHTML = '', iconHTML = '';
+            if (item.type === 'folder') {
+                iconHTML = `<div class="file-icon icon-folder"><i class="fa-solid fa-folder"></i></div>`;
+            } else if (item.fileType === 'image' && item.blob) {
+                const url = URL.createObjectURL(item.blob);
+                previewHTML = `<div class="file-thumb"><img src="${url}" alt="${escapeHtml(item.name)}" loading="lazy"></div>`;
+                setTimeout(() => URL.revokeObjectURL(url), 30000);
+            } else if (item.fileType === 'video' && item.blob) {
+                const url = URL.createObjectURL(item.blob);
+                previewHTML = `<div class="file-thumb">
+                    <video src="${url}" preload="metadata" muted></video>
+                    <div class="video-overlay"><i class="fa-solid fa-circle-play"></i></div>
+                </div>`;
+                setTimeout(() => URL.revokeObjectURL(url), 30000);
+            } else if (item.skipped) {
+                iconHTML = `<div class="file-icon icon-data"><i class="fa-solid fa-cloud-slash"></i></div>`;
+            } else {
+                const iconInfo = getFileIcon(item.name);
+                iconHTML = `<div class="file-icon ${iconInfo.color}"><i class="fa-solid ${iconInfo.icon}"></i></div>`;
+            }
+            let subtitle;
+            if (item.type === 'folder') {
+                subtitle = `Thư mục • ${countChildren(item.id)} mục`;
+            } else if (item.skipped) {
+                subtitle = `${formatFileSize(item.size)} • Không có sẵn trong link`;
+            } else {
+                subtitle = `${formatFileSize(item.size)} • ${item.date}`;
+            }
+            const showDelete = !(isViewMode && sharePerm === 'view');
+            const showDownload = item.type === 'file' && item.blob;
+            card.innerHTML = `
+                ${showDelete ? '<button class="btn-delete-card" title="Xóa"><i class="fa-solid fa-xmark"></i></button>' : ''}
+                ${previewHTML}
+                ${iconHTML}
+                <div class="file-info">
+                    <h3 title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</h3>
+                    <p>${subtitle}</p>
+                </div>
+                <div class="card-actions">
+                    <button class="btn-share"><i class="fa-solid fa-share-nodes"></i> Chia sẻ</button>
+                    ${showDownload ? '<button class="btn-download"><i class="fa-solid fa-download"></i> Tải</button>' : ''}
+                </div>
+            `;
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('button')) return;
+                if (item.type === 'folder') openFolder(item.id);
+                else openFile(item.id);
+            });
+            const delBtn = card.querySelector('.btn-delete-card');
+            if (delBtn) delBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); askDelete(item.id);
+            });
+            card.querySelector('.btn-share').addEventListener('click', (e) => {
+                e.stopPropagation(); shareItem(item.id);
+            });
+            const dlBtn = card.querySelector('.btn-download');
+            if (dlBtn) dlBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); downloadFile(item.id);
+            });
+            return card;
+        }
+
+        /* =========================================================
+           OPEN / DOWNLOAD
+           ========================================================= */
+        function openFile(id) {
+            const item = getItem(id);
+            if (!item) {
+                showToast('Không tìm thấy file!', 'fa-circle-exclamation', '#ef4444');
+                return;
+            }
+            if (item.skipped || !item.blob) {
+                showToast('File này không có sẵn trong link chia sẻ!', 'fa-cloud-slash', '#f59e0b');
+                return;
+            }
+            const url = URL.createObjectURL(item.blob);
+            const newTab = window.open(url, '_blank');
+            if (!newTab) {
+                showToast('Trình duyệt đã chặn popup. Hãy cho phép popup!', 'fa-triangle-exclamation', '#f59e0b');
+            } else {
+                showToast('Đang mở: ' + item.name, 'fa-file', '#38bdf8');
+                setTimeout(() => URL.revokeObjectURL(url), 120000);
+            }
+        }
+        function downloadFile(id) {
+            const item = getItem(id);
+            if (!item || !item.blob) {
+                showToast('File này không có sẵn để tải!', 'fa-cloud-slash', '#f59e0b');
+                return;
+            }
+            const url = URL.createObjectURL(item.blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = item.name;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(url), 10000);
+            showToast('Đang tải: ' + item.name, 'fa-download', '#22c55e');
+        }
+
+        /* =========================================================
+           DRAG & DROP
+           ========================================================= */
+        let dragCounter = 0;
+        const dropOverlay = document.getElementById('dropOverlay');
+        window.addEventListener('dragenter', (e) => {
+            e.preventDefault();
+            if (isViewMode && sharePerm === 'view') return;
+            if (e.dataTransfer && Array.from(e.dataTransfer.types).includes('Files')) {
+                dragCounter++;
+                dropOverlay.classList.add('show');
+            }
+        });
+        window.addEventListener('dragover', (e) => e.preventDefault());
+        window.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dragCounter--;
+            if (dragCounter <= 0) { dragCounter = 0; dropOverlay.classList.remove('show'); }
+        });
+        window.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            dragCounter = 0;
+            dropOverlay.classList.remove('show');
+            if (isViewMode && sharePerm === 'view') {
+                showToast('Bạn chỉ có quyền xem!', 'fa-lock', '#f59e0b');
+                return;
+            }
+            const files = e.dataTransfer && e.dataTransfer.files;
+            if (files && files.length > 0) await processFiles(files);
+        });
+
+        /* =========================================================
+           INIT
+           ========================================================= */
+        async function init() {
+            // Fallback: chắc chắn ẩn overlay sau 3 giây dù có lỗi gì
+            const safetyTimeout = setTimeout(() => {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+            }, 3000);
+
+            try {
+                loadProfile();
+                renderUserUI();
+                const isShare = checkShareLink();
+                if (!isShare) {
+                    try {
+                        await openDB();
+                        const savedItems = await dbGetAll('items');
+                        items = savedItems || [];
+                        idCounter = 1;
+                        items.forEach(i => {
+                            const m = i.id.match(/^[fd]_(\d+)$/);
+                            if (m && +m[1] >= idCounter) idCounter = +m[1] + 1;
+                        });
+                    } catch (err) {
+                        console.error('IndexedDB error:', err);
+                        showToast('Không thể truy cập kho lưu trữ!', 'fa-circle-exclamation', '#ef4444');
+                    }
+                }
+                render();
+            } catch (err) {
+                console.error('Init error:', err);
+            } finally {
+                clearTimeout(safetyTimeout);
+                setTimeout(() => {
+                    document.getElementById('loadingOverlay').classList.add('hidden');
+                }, 400);
+            }
+        }
+        init();
+    </script>
+</body>
+</html>
